@@ -2,6 +2,9 @@ package org.example.game;
 
 import org.example.api.ApiController;
 import org.example.model.*;
+import org.example.model.command.ShipCommand;
+import org.example.model.command.ShipCommands;
+import org.example.model.response.ScanResponse;
 
 import java.time.Duration;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.model.response;
 
 public class Error {
     private String message;

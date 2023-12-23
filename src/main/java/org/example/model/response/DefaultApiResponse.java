@@ -1,18 +1,18 @@
-package org.example.model;
+package org.example.model.response;
 
 import java.util.List;
 
-public class ScanResponse {
-    private Scan scan;
+public class DefaultApiResponse {
+    private long tick;
     private boolean success;
     private List<Error> errors;
 
-    public Scan getScan() {
-        return scan;
+    public long getTick() {
+        return tick;
     }
 
-    public void setScan(Scan scan) {
-        this.scan = scan;
+    public void setTick(long tick) {
+        this.tick = tick;
     }
 
     public boolean isSuccess() {

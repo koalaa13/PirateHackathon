@@ -1,4 +1,6 @@
-package org.example.model;
+package org.example.model.command;
+
+import org.example.model.Shoot;
 
 public class ShipCommand {
     private long id = 0;

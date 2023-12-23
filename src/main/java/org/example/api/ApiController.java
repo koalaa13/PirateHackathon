@@ -7,9 +7,10 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.example.model.ScanResponse;
-import org.example.model.ShipCommands;
-import org.example.model.ShipCommandsResponse;
+import org.example.model.command.LongScanCommand;
+import org.example.model.response.ScanResponse;
+import org.example.model.command.ShipCommands;
+import org.example.model.response.DefaultApiResponse;
 
 import java.io.IOException;
 
@@ -40,8 +41,8 @@ public class ApiController {
         return scanResponse;
     }
 
-    public ShipCommandsResponse shipCommand(ShipCommands query) {
-        ShipCommandsResponse shipCommandsResponse = null;
+    public DefaultApiResponse shipCommand(ShipCommands query) {
+        DefaultApiResponse defaultApiResponse = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             final String json = objectMapper.writeValueAsString(query);
             final StringEntity entity = new StringEntity(json);
@@ -51,12 +52,33 @@ public class ApiController {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-type", "application/json");
 
-            shipCommandsResponse = client.execute(request, response ->
-                    objectMapper.readValue(response.getEntity().getContent(), ShipCommandsResponse.class)
+            defaultApiResponse = client.execute(request, response ->
+                    objectMapper.readValue(response.getEntity().getContent(), DefaultApiResponse.class)
             );
         } catch (IOException e) {
             System.err.println(e);
         }
-        return shipCommandsResponse;
+        return defaultApiResponse;
+    }
+
+    public DefaultApiResponse longScan(long x, long y) {
+        DefaultApiResponse defaultApiResponse = null;
+        LongScanCommand longScanCommand = new LongScanCommand(x, y);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            final String json = objectMapper.writeValueAsString(longScanCommand);
+            final StringEntity entity = new StringEntity(json);
+            HttpPost request = new HttpPost(API_URL + "/longScan");
+            request.setEntity(entity);
+            request.setHeader(API_AUTH_HEADER, API_KEY);
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-type", "application/json");
+
+            defaultApiResponse = client.execute(request,
+                    response -> objectMapper.readValue(response.getEntity().getContent(), DefaultApiResponse.class)
+            );
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+        return defaultApiResponse;
     }
 }

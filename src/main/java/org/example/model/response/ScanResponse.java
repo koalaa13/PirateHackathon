@@ -1,18 +1,20 @@
-package org.example.model;
+package org.example.model.response;
+
+import org.example.model.Scan;
 
 import java.util.List;
 
-public class ShipCommandsResponse {
-    private long tick;
+public class ScanResponse {
+    private Scan scan;
     private boolean success;
     private List<Error> errors;
 
-    public long getTick() {
-        return tick;
+    public Scan getScan() {
+        return scan;
     }
 
-    public void setTick(long tick) {
-        this.tick = tick;
+    public void setScan(Scan scan) {
+        this.scan = scan;
     }
 
     public boolean isSuccess() {
