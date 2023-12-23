@@ -1,17 +1,16 @@
 package org.example;
 
-import org.example.api.ApiGetter;
-import org.example.model.Scan;
-import org.example.model.ScanResponse;
-import org.example.model.Ship;
+import org.example.model.IslandMap;
+import org.example.parse.MapParser;
+import org.example.visual.Visualizer;
+
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        ApiGetter apiGetter = new ApiGetter();
-        ScanResponse scanResponse = apiGetter.scan();
-        Scan scan = scanResponse.getScan();
-        for (Ship myShip : scan.getMyShips()) {
-            System.out.println(myShip.getId());
-        }
+        MapParser mapParser = new MapParser();
+        IslandMap islandMap = mapParser.parseIslandMap();
+        Visualizer visualizer = new Visualizer(islandMap, new ArrayList<>(), new ArrayList<>());
+        visualizer.visualize(0, 0, 30);
     }
 }

@@ -9,6 +9,16 @@ public class Scan {
 
     private Zone zone;
 
+    private long tick;
+
+    public long getTick() {
+        return tick;
+    }
+
+    public void setTick(long tick) {
+        this.tick = tick;
+    }
+
     public List<Ship> getMyShips() {
         return myShips;
     }

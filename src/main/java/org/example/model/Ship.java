@@ -1,5 +1,8 @@
 package org.example.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Ship {
     private long id;
     private long x;
@@ -19,7 +22,30 @@ public class Ship {
     private long cannonShootSuccessCount;
 
     public static enum Direction {
-        south, north, west, east;
+        south(0, -1),
+        north(0, 1),
+        west(-1, 0),
+        east(1, 0);
+
+        Direction(int xDirection, int yDirection) {
+            this.xDirection = xDirection;
+            this.yDirection = yDirection;
+        }
+
+        final int xDirection;
+        final int yDirection;
+    }
+
+    public Set<Tile> toTiles() {
+        Set<Tile> tiles = new HashSet<>();
+        long curX = this.x;
+        long curY = this.y;
+        for (int i = 0; i < size; ++i) {
+            tiles.add(new Tile(curX, curY));
+            curX += this.direction.xDirection;
+            curY += this.direction.yDirection;
+        }
+        return tiles;
     }
 
     public long getId() {
