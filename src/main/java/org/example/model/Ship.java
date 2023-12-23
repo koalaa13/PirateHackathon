@@ -22,8 +22,8 @@ public class Ship {
     private long cannonShootSuccessCount;
 
     public static enum Direction {
-        south(0, -1),
-        north(0, 1),
+        south(0, 1),
+        north(0, -1),
         west(-1, 0),
         east(1, 0);
 
