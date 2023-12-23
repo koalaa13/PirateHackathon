@@ -75,15 +75,46 @@ public class Game {
         }
     }
 
-    private ShipCommands makeShipCommands(Scan scan) {
+    private ShipCommands buildShipCommands(Scan scan) {
         List<ShipCommand> shipCommandList = new ArrayList<>();
         ShipCommands shipCommands = new ShipCommands();
         shipCommands.setShips(shipCommandList);
         for (Ship ship : scan.getMyShips()) {
             shipCommandList.add(new ShipCommand(ship.getId()));
         }
-        // choosing shoots
-        fillShoots(scan, shipCommandList);
+        return shipCommands;
+    }
+
+    private void fillCommandToStop(Ship ship, ShipCommand shipCommand) {
+        if (ship == null) {
+            return;
+        }
+        long maxChange = ship.getMaxChangeSpeed();
+        long curSpeed = ship.getSpeed();
+        long delta = -Math.min(maxChange, curSpeed);
+        if (shipCommand.getId() == ship.getId()) {
+            shipCommand.setChangeSpeed(delta);
+        }
+    }
+
+    private Ship findShipById(Scan scan, long shipId) {
+        return scan.getMyShips().stream().filter(s -> s.getId() == shipId).findFirst().orElse(null);
+    }
+
+    private void fillCommandToStopToEveryone(Scan scan, List<ShipCommand> shipCommandList) {
+        for (ShipCommand shipCommand : shipCommandList) {
+            long shipId = shipCommand.getId();
+            Ship ship = findShipById(scan, shipId);
+            fillCommandToStop(ship, shipCommand);
+        }
+    }
+
+    public ShipCommands makeShipCommands(Scan scan) {
+        ShipCommands shipCommands = buildShipCommands(scan);
+        List<ShipCommand> shipCommandList = shipCommands.getShips();
+        // TODO build strategy here
+//        fillShoots(scan, shipCommandList);
+//        fillCommandToStopToEveryone(scan, shipCommandList);
 
         return shipCommands;
     }
