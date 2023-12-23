@@ -30,10 +30,15 @@ public class Game {
     private boolean isNear(Ship ship, Shoot shoot) {
         long diffX = ship.getX() - shoot.getX();
         long diffY = ship.getY() - shoot.getY();
-        return Math.sqrt(diffX * diffX + diffY * diffY) <= ship.getCannonRadius();
+        return diffX * diffX + diffY * diffY <= ship.getCannonRadius() * ship.getCannonRadius();
     }
 
-    private ShipCommands makeShipCommands(Scan scan) {
+    /**
+     * Находим тайлы, выстрелив по которым можно в теории попасть во вражеский корабль
+     * @param scan скан
+     * @return лист возможных выстрелов
+     */
+    private List<Shoot> getPotentialShoots(Scan scan) {
         List<Shoot> potentialShoots = new ArrayList<>();
         for (Ship ship : scan.getEnemyShips()) {
             potentialShoots.add(new Shoot(ship.getX(), ship.getY()));
@@ -43,28 +48,43 @@ public class Game {
         potentialShoots = potentialShoots.stream()
                 .filter(shoot -> !islandMap.contains(shoot.getX(), shoot.getY()))
                 .collect(Collectors.toList());
-        List<ShipCommand> shipCommandList = new ArrayList<>();
-        ShipCommands shipCommands = new ShipCommands();
-        shipCommands.setShips(shipCommandList);
+        return potentialShoots;
+    }
+
+    /**
+     * Выбираем кто куда стреляет
+     * @param scan скан
+     * @param shipCommandList лист ShipCommand, в которых нужно заполнить информацию о выстрелах
+     */
+    private void fillShoots(Scan scan, List<ShipCommand> shipCommandList) {
+        List<Shoot> potentialShoots = getPotentialShoots(scan);
         if (!potentialShoots.isEmpty()) {
             Random randomizer = new Random();
-            for (Ship ship : scan.getMyShips()) {
+            for (int j = 0; j < scan.getMyShips().size(); ++j) {
+                Ship ship = scan.getMyShips().get(j);
                 if (ship.getCannonCooldownLeft() > 0) continue;
-                ShipCommand shipCommand = new ShipCommand();
-                shipCommand.setId(ship.getId());
                 int randomPos = randomizer.nextInt(potentialShoots.size());
                 for (int i = 0; i < potentialShoots.size(); i++) {
                     Shoot shoot = potentialShoots.get((randomPos + i) % potentialShoots.size());
                     if (isNear(ship, shoot)) {
-                        shipCommand.setCannonShoot(shoot);
+                        shipCommandList.get(j).setCannonShoot(shoot);
                         break;
                     }
                 }
-                if (shipCommand.getCannonShoot() != null) {
-                    shipCommandList.add(shipCommand);
-                }
             }
         }
+    }
+
+    private ShipCommands makeShipCommands(Scan scan) {
+        List<ShipCommand> shipCommandList = new ArrayList<>();
+        ShipCommands shipCommands = new ShipCommands();
+        shipCommands.setShips(shipCommandList);
+        for (Ship ship : scan.getMyShips()) {
+            shipCommandList.add(new ShipCommand(ship.getId()));
+        }
+        // choosing shoots
+        fillShoots(scan, shipCommandList);
+
         return shipCommands;
     }
 

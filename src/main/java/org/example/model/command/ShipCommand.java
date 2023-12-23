@@ -3,13 +3,25 @@ package org.example.model.command;
 import org.example.model.Shoot;
 
 public class ShipCommand {
-    private long id = 0;
+    private long id;
 
-    private long changeSpeed = 0;
+    private long changeSpeed;
 
-    private int rotate = 0;
+    private int rotate;
 
-    private Shoot cannonShoot = null;
+    private Shoot cannonShoot;
+
+    public ShipCommand() {
+        this.id = 0;
+        this.changeSpeed = 0;
+        this.rotate = 0;
+        this.cannonShoot = null;
+    }
+
+    public ShipCommand(long id) {
+        this();
+        this.id = id;
+    }
 
     public long getId() {
         return id;
