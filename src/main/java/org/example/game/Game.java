@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Game {
     private final IslandMap islandMap;
@@ -36,7 +37,9 @@ public class Game {
             potentialShoots.add(new Shoot(ship.getHeadX(), ship.getHeadY()));
             potentialShoots.add(new Shoot(ship.getForwardX(), ship.getForwardY()));
         }
-        // TODO: Filter out island coords
+        potentialShoots = potentialShoots.stream()
+                .filter(shoot -> !islandMap.contains(shoot.getX(), shoot.getY()))
+                .collect(Collectors.toList());
         List<ShipCommand> shipCommandList = new ArrayList<>();
         ShipCommands shipCommands = new ShipCommands();
         shipCommands.setShipCommands(shipCommandList);
