@@ -73,11 +73,11 @@ public class Ship {
     }
 
     public long getHeadX() {
-        return x + getDirection().xDirection * (getSize() - 1);
+        return x + (long) getDirection().xDirection * (getSize() - 1);
     }
 
     public long getHeadY() {
-        return y + getDirection().yDirection * (getSize() - 1);
+        return y + (long) getDirection().yDirection * (getSize() - 1);
     }
 
     public long getForwardX() {

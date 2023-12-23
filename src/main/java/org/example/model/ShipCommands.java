@@ -3,13 +3,13 @@ package org.example.model;
 import java.util.List;
 
 public class ShipCommands {
-    private List<ShipCommand> shipCommands;
+    private List<ShipCommand> ships;
 
-    public List<ShipCommand> getShipCommands() {
-        return shipCommands;
+    public List<ShipCommand> getShips() {
+        return ships;
     }
 
-    public void setShipCommands(List<ShipCommand> shipCommands) {
-        this.shipCommands = shipCommands;
+    public void setShips(List<ShipCommand> ships) {
+        this.ships = ships;
     }
 }

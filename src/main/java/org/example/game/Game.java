@@ -1,6 +1,6 @@
 package org.example.game;
 
-import org.example.api.ApiGetter;
+import org.example.api.ApiController;
 import org.example.model.*;
 
 import java.time.Duration;
@@ -19,7 +19,7 @@ public class Game {
     public boolean verify(boolean statement, String description) throws InterruptedException {
         if (!statement) {
             System.err.printf("Failed '%s'%n", description);
-            Thread.sleep(Duration.ofSeconds(10));
+            Thread.sleep(Duration.ofSeconds(10).toMillis());
         }
         return statement;
     }
@@ -42,7 +42,7 @@ public class Game {
                 .collect(Collectors.toList());
         List<ShipCommand> shipCommandList = new ArrayList<>();
         ShipCommands shipCommands = new ShipCommands();
-        shipCommands.setShipCommands(shipCommandList);
+        shipCommands.setShips(shipCommandList);
         if (!potentialShoots.isEmpty()) {
             Random randomizer = new Random();
             for (Ship ship : scan.getMyShips()) {
@@ -66,17 +66,17 @@ public class Game {
     }
 
     public void play() throws InterruptedException {
-        ApiGetter apiGetter = new ApiGetter();
+        ApiController apiController = new ApiController();
         long lastTick = -1;
         while (true) {
-            ScanResponse response = apiGetter.scan();
+            ScanResponse response = apiController.scan();
             if (!verify(response.isSuccess(), "success scan query")) continue;
             Scan scan = response.getScan();
             if (!verify(scan != null, "scan not null")) continue;
             if (scan.getTick() == lastTick) continue;
             ShipCommands shipCommands = makeShipCommands(scan);
-            apiGetter.shipCommand(shipCommands);
-            Thread.sleep(Duration.ofSeconds(1));
+            apiController.shipCommand(shipCommands);
+            Thread.sleep(Duration.ofSeconds(1).toMillis());
         }
     }
 }
