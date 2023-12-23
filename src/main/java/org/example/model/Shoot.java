@@ -5,6 +5,15 @@ public class Shoot {
 
     private long y;
 
+    public Shoot() {
+
+    }
+
+    public Shoot(long x, long y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public long getX() {
         return x;
     }

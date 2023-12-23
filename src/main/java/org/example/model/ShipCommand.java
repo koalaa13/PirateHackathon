@@ -1,13 +1,13 @@
 package org.example.model;
 
 public class ShipCommand {
-    private long id;
+    private long id = 0;
 
-    private long changeSpeed;
+    private long changeSpeed = 0;
 
-    private int rotate;
+    private int rotate = 0;
 
-    private Shoot cannonShoot;
+    private Shoot cannonShoot = null;
 
     public long getId() {
         return id;

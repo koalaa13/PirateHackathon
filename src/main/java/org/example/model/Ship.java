@@ -72,6 +72,22 @@ public class Ship {
         this.y = y;
     }
 
+    public long getHeadX() {
+        return x + getDirection().xDirection * (getSize() - 1);
+    }
+
+    public long getHeadY() {
+        return y + getDirection().yDirection * (getSize() - 1);
+    }
+
+    public long getForwardX() {
+        return x + getDirection().xDirection * getSpeed();
+    }
+
+    public long getForwardY() {
+        return y + getDirection().yDirection * getSpeed();
+    }
+
     public int getSize() {
         return size;
     }
