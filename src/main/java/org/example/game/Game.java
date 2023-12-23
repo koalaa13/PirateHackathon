@@ -5,6 +5,8 @@ import org.example.model.*;
 import org.example.model.command.ShipCommand;
 import org.example.model.command.ShipCommands;
 import org.example.model.response.ScanResponse;
+import org.example.service.alert.AlertService;
+import org.example.service.util.UtilService;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -15,8 +17,11 @@ import java.util.stream.Collectors;
 public class Game {
     private final IslandMap islandMap;
 
+    private final UtilService utilService;
+
     public Game(IslandMap islandMap) {
         this.islandMap = islandMap;
+        this.utilService = new UtilService();
     }
 
     public boolean verify(boolean statement, String description) throws InterruptedException {
@@ -25,12 +30,6 @@ public class Game {
             Thread.sleep(Duration.ofSeconds(10).toMillis());
         }
         return statement;
-    }
-
-    private boolean isNear(Ship ship, Shoot shoot) {
-        long diffX = ship.getX() - shoot.getX();
-        long diffY = ship.getY() - shoot.getY();
-        return diffX * diffX + diffY * diffY <= ship.getCannonRadius() * ship.getCannonRadius();
     }
 
     /**
@@ -66,7 +65,7 @@ public class Game {
                 int randomPos = randomizer.nextInt(potentialShoots.size());
                 for (int i = 0; i < potentialShoots.size(); i++) {
                     Shoot shoot = potentialShoots.get((randomPos + i) % potentialShoots.size());
-                    if (isNear(ship, shoot)) {
+                    if (utilService.isNear(ship, shoot)) {
                         shipCommandList.get(j).setCannonShoot(shoot);
                         break;
                     }
@@ -97,14 +96,10 @@ public class Game {
         }
     }
 
-    private Ship findShipById(Scan scan, long shipId) {
-        return scan.getMyShips().stream().filter(s -> s.getId() == shipId).findFirst().orElse(null);
-    }
-
     private void fillCommandToStopToEveryone(Scan scan, List<ShipCommand> shipCommandList) {
         for (ShipCommand shipCommand : shipCommandList) {
             long shipId = shipCommand.getId();
-            Ship ship = findShipById(scan, shipId);
+            Ship ship = utilService.findShipById(scan, shipId, false);
             fillCommandToStop(ship, shipCommand);
         }
     }
@@ -121,15 +116,23 @@ public class Game {
 
     public void play() throws InterruptedException {
         ApiController apiController = new ApiController();
+        AlertService alertService = new AlertService();
+
         long lastTick = -1;
+        Scan oldScan = null;
         while (true) {
             ScanResponse response = apiController.scan();
             if (!verify(response.isSuccess(), "success scan query")) continue;
-            Scan scan = response.getScan();
-            if (!verify(scan != null, "scan not null")) continue;
-            if (scan.getTick() == lastTick) continue;
-            ShipCommands shipCommands = makeShipCommands(scan);
+            Scan newScan = response.getScan();
+            if (!verify(newScan != null, "scan not null")) continue;
+            if (newScan.getTick() == lastTick) continue;
+
+            alertService.getAllInfos(oldScan, newScan).forEach(System.out::println);
+
+            ShipCommands shipCommands = makeShipCommands(newScan);
             apiController.shipCommand(shipCommands);
+
+            oldScan = newScan;
             Thread.sleep(Duration.ofSeconds(1).toMillis());
         }
     }
