@@ -72,8 +72,8 @@ public class GraphVisualizer extends JFrame {
                 g.setColor(new Color(180, 180, 0));
                 paintTiles(islandMap.getRawTiles(), g);
 
-                g.setColor(new Color(230, 230, 230));
-                g.drawRect((int) (1000 * zoom), (int) (1000 * zoom), 2, 2);
+                g.setColor(new Color(0, 0, 0));
+                g.drawRect((int) (W / 2 * zoom), (int) (H / 2 * zoom), 2, 2);
             }
         };
 
