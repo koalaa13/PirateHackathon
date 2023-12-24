@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GraphVisualizer extends JFrame {
-    private double zoom = 0.4;
+    private double zoom = 0.45;
     private IslandMap islandMap;
 
     private List<Ship> myShips = new ArrayList<>();
@@ -107,7 +107,7 @@ public class GraphVisualizer extends JFrame {
 
     private void paintShipLabels(Graphics g) {
         for (Ship ship : myShips) {
-            g.setFont(new Font("Bold", 1, 5));
+            g.setFont(new Font("Bold", 1, 6));
             g.drawString(ship.getId() + "", (int) (ship.getX() * zoom), (int) ((ship.getY() - 30) * zoom));
         }
     }
