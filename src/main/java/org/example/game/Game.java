@@ -48,7 +48,14 @@ public class Game {
      */
     private List<Shoot> getPotentialShoots(Scan scan) {
         List<Shoot> potentialShoots = new ArrayList<>();
-        for (Ship ship : scan.getEnemyShips()) {
+        List<Ship> sortedShipsViaHp = new ArrayList<>(scan.getEnemyShips());
+        sortedShipsViaHp.sort((s1, s2) -> {
+            if (s1.getHp() == s2.getHp()) {
+                return -Integer.compare(s1.getSize(), s2.getSize());
+            }
+            return Integer.compare(s1.getHp(), s2.getHp());
+        });
+        for (Ship ship : sortedShipsViaHp) {
             potentialShoots.add(new Shoot(ship.getForwardX(), ship.getForwardY()));
         }
         potentialShoots = potentialShoots.stream()
@@ -65,13 +72,11 @@ public class Game {
     private void fillShoots(Scan scan, List<ShipCommand> shipCommandList) {
         List<Shoot> potentialShoots = getPotentialShoots(scan);
         if (!potentialShoots.isEmpty()) {
-            Random randomizer = new Random();
             for (int j = 0; j < scan.getMyShips().size(); ++j) {
                 Ship ship = scan.getMyShips().get(j);
                 if (ship.getCannonCooldownLeft() > 0) continue;
-                int randomPos = randomizer.nextInt(potentialShoots.size());
                 for (int i = 0; i < potentialShoots.size(); i++) {
-                    Shoot shoot = potentialShoots.get((randomPos + i) % potentialShoots.size());
+                    Shoot shoot = potentialShoots.get(i);
                     if (utilService.isNear(ship, shoot)) {
                         shipCommandList.get(j).setCannonShoot(shoot);
                         break;
