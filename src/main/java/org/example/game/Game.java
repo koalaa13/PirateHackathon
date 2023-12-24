@@ -1,5 +1,6 @@
 package org.example.game;
 
+import jdk.internal.net.http.common.Pair;
 import org.example.api.ApiController;
 import org.example.model.*;
 import org.example.model.command.ShipCommand;
@@ -46,8 +47,8 @@ public class Game {
      * @param scan скан
      * @return лист возможных выстрелов
      */
-    private List<Shoot> getPotentialShoots(Scan scan) {
-        List<Shoot> potentialShoots = new ArrayList<>();
+    private List<Pair<Shoot, Long>> getPotentialShoots(Scan scan) {
+        List<Pair<Shoot, Long>> potentialShoots = new ArrayList<>();
         List<Ship> sortedShipsViaHp = new ArrayList<>(scan.getEnemyShips());
         sortedShipsViaHp.sort((s1, s2) -> {
             if (s1.getHp() == s2.getHp()) {
@@ -56,10 +57,10 @@ public class Game {
             return Integer.compare(s1.getHp(), s2.getHp());
         });
         for (Ship ship : sortedShipsViaHp) {
-            potentialShoots.add(new Shoot(ship.getForwardX(), ship.getForwardY()));
+            potentialShoots.add(new Pair(new Shoot(ship.getForwardX(), ship.getForwardY()), ship.getHp()));
         }
         potentialShoots = potentialShoots.stream()
-                .filter(shoot -> !islandMap.contains(shoot.getX(), shoot.getY()))
+                .filter(shoot -> !islandMap.contains(shoot.first.getX(), shoot.first.getY()))
                 .collect(Collectors.toList());
         return potentialShoots;
     }
@@ -70,15 +71,16 @@ public class Game {
      * @param shipCommandList лист ShipCommand, в которых нужно заполнить информацию о выстрелах
      */
     private void fillShoots(Scan scan, List<ShipCommand> shipCommandList) {
-        List<Shoot> potentialShoots = getPotentialShoots(scan);
+        List<Pair<Shoot, Long>> potentialShoots = getPotentialShoots(scan);
         if (!potentialShoots.isEmpty()) {
             for (int j = 0; j < scan.getMyShips().size(); ++j) {
                 Ship ship = scan.getMyShips().get(j);
                 if (ship.getCannonCooldownLeft() > 0) continue;
                 for (int i = 0; i < potentialShoots.size(); i++) {
-                    Shoot shoot = potentialShoots.get(i);
-                    if (utilService.isNear(ship, shoot)) {
+                    Shoot shoot = potentialShoots.get(i).first;
+                    if (utilService.isNear(ship, shoot) && potentialShoots.get(i).second > 0) {
                         shipCommandList.get(j).setCannonShoot(shoot);
+                        potentialShoots.set(i, new Pair<>(shoot, potentialShoots.get(i).second - 1));
                         break;
                     }
                 }
@@ -183,10 +185,13 @@ public class Game {
         List<ShipCommand> shipCommandList = shipCommands.getShips();
         // TODO build strategy here
         fillShoots(scan, shipCommandList);
+        Set<Shoot> usedCells = new HashSet<>();
         for (ShipCommand shipCommand : shipCommandList) {
             Long shipId = shipCommand.getId();
             if (moveX.containsKey(shipId) && moveY.containsKey(shipId)) {
-                fillCommandToMove(utilService.findShipById(scan, shipId, false),
+                Ship ship = utilService.findShipById(scan, shipId, false);
+
+                fillCommandToMove(ship,
                         shipCommand,
                         moveX.get(shipId),
                         moveY.get(shipId)
@@ -203,8 +208,8 @@ public class Game {
         if (zone != null) {
             ApiController apiController = new ApiController();
             Random random = new Random();
-            int diffX = random.nextInt((int) zone.getRadius());
-            int diffY = random.nextInt((int) zone.getRadius());
+            int diffX = random.nextInt((int) zone.getRadius() + 1);
+            int diffY = random.nextInt((int) zone.getRadius() + 1);
             int signX = random.nextBoolean() ? 1 : -1;
             int signY = random.nextBoolean() ? 1 : -1;
             long x = zone.getX() + signX * diffX;
