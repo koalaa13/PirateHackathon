@@ -107,7 +107,7 @@ public class GraphVisualizer extends JFrame {
 
     private void paintShipLabels(Graphics g) {
         for (Ship ship : myShips) {
-            g.setFont(new Font("Bold", 1, 3));
+            g.setFont(new Font("Bold", 1, 5));
             g.drawString(ship.getId() + "", (int) (ship.getX() * zoom), (int) ((ship.getY() - 30) * zoom));
         }
     }

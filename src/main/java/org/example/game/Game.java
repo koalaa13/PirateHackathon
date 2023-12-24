@@ -50,7 +50,6 @@ public class Game {
     private List<Shoot> getPotentialShoots(Scan scan) {
         List<Shoot> potentialShoots = new ArrayList<>();
         for (Ship ship : scan.getEnemyShips()) {
-            potentialShoots.add(new Shoot(ship.getX(), ship.getY()));
             potentialShoots.add(new Shoot(ship.getHeadX(), ship.getHeadY()));
             potentialShoots.add(new Shoot(ship.getForwardX(), ship.getForwardY()));
         }
