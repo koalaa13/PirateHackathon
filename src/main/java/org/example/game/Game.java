@@ -1,6 +1,5 @@
 package org.example.game;
 
-import jdk.internal.net.http.common.Pair;
 import org.example.api.ApiController;
 import org.example.model.*;
 import org.example.model.command.ShipCommand;
@@ -20,6 +19,16 @@ import java.util.stream.Collectors;
 import static java.lang.Math.*;
 
 public class Game {
+    private static class Pair<T, U> {
+        public T first;
+        public U second;
+
+        Pair(T first, U second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
     private final IslandMap islandMap;
     private FieldUI fieldUI;
 
