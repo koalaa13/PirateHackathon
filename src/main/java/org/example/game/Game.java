@@ -9,6 +9,7 @@ import org.example.model.response.Error;
 import org.example.model.response.ScanResponse;
 import org.example.service.alert.AlertService;
 import org.example.service.util.UtilService;
+import org.example.visual.GraphVisualizer;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -21,9 +22,12 @@ public class Game {
 
     private final UtilService utilService;
 
-    public Game(IslandMap islandMap) {
+    private final GraphVisualizer graphVisualizer;
+
+    public Game(IslandMap islandMap, GraphVisualizer graphVisualizer) {
         this.islandMap = islandMap;
         this.utilService = new UtilService();
+        this.graphVisualizer = graphVisualizer;
     }
 
     public boolean verify(boolean statement, String description) throws InterruptedException {

@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class IslandMap {
@@ -23,6 +24,10 @@ public class IslandMap {
 
         public boolean contains(long x, long y) {
             return this.tiles.contains(new Tile(x, y));
+        }
+
+        public Iterator<Tile> iterateTiles() {
+            return tiles.iterator();
         }
     }
 
@@ -50,5 +55,9 @@ public class IslandMap {
 
     public boolean contains(long x, long y) {
         return this.islandTiles.contains(x, y);
+    }
+
+    public Tiles getRawTiles() {
+        return islandTiles;
     }
 }
