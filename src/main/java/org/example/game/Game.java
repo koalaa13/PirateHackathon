@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+
 public class Game {
     private final IslandMap islandMap;
 
@@ -107,6 +110,58 @@ public class Game {
             long shipId = shipCommand.getId();
             Ship ship = utilService.findShipById(scan, shipId, false);
             fillCommandToStop(ship, shipCommand);
+        }
+    }
+
+    private void fillCommandNewDirection(Ship ship, ShipCommand shipCommand, Ship.Direction direction) {
+        Ship.Direction curDirection = ship.getDirection();
+        if (curDirection.xDirection == direction.xDirection || curDirection.yDirection == direction.yDirection) return;
+        if (direction.xDirection == -curDirection.yDirection && direction.yDirection == curDirection.xDirection) {
+            shipCommand.setRotate(90);
+        } else {
+            shipCommand.setRotate(-90);
+        }
+    }
+
+    private void fillCommandToTurn(Ship ship, ShipCommand shipCommand, long targetX, long targetY) {
+        long shipX = ship.getX();
+        long shipY = ship.getY();
+
+        long dx = targetX - shipX;
+        long dy = targetY - shipY;
+
+        Ship.Direction newDirection;
+        if (abs(dx) > abs(dy)) {
+            if (dx > 0) {
+                newDirection = Ship.Direction.east;
+            } else {
+                newDirection = Ship.Direction.west;
+            }
+        } else {
+            if (dy > 0) {
+                newDirection = Ship.Direction.south;
+            } else {
+                newDirection = Ship.Direction.north;
+            }
+        }
+
+        fillCommandNewDirection(ship, shipCommand, newDirection);
+    }
+
+    private static final long MOVE_DESTINATION_RADIUS = 30;
+
+    private void fillCommandToMove(Ship ship, ShipCommand shipCommand, long targetX, long targetY) {
+        long shipX = ship.getX();
+        long shipY = ship.getY();
+        long dx = targetX - shipX;
+        long dy = targetY - shipY;
+        long dist = max(abs(dx), abs(dy));
+
+        if (dist <= MOVE_DESTINATION_RADIUS) {
+            shipCommand.setChangeSpeed(-ship.getMaxChangeSpeed());
+        } else {
+            fillCommandToTurn(ship, shipCommand, targetX, targetY);
+            shipCommand.setChangeSpeed(ship.getMaxChangeSpeed() - ship.getSpeed());
         }
     }
 

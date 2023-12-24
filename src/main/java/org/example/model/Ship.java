@@ -32,8 +32,10 @@ public class Ship {
             this.yDirection = yDirection;
         }
 
-        final int xDirection;
-        final int yDirection;
+        public final int xDirection;
+        public final int yDirection;
+
+
     }
 
     public Set<Tile> toTiles() {
