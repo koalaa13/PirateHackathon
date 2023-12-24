@@ -126,7 +126,7 @@ public class Game {
         }
     }
 
-    private void fillCommandToTurn(Ship ship, ShipCommand shipCommand, long targetX, long targetY) {
+    private Ship.Direction fillCommandToTurn(Ship ship, ShipCommand shipCommand, long targetX, long targetY) {
         long shipX = ship.getX();
         long shipY = ship.getY();
 
@@ -149,6 +149,7 @@ public class Game {
         }
 
         fillCommandNewDirection(ship, shipCommand, newDirection);
+        return newDirection;
     }
 
     private static final long MOVE_DESTINATION_RADIUS = 30;
@@ -163,7 +164,16 @@ public class Game {
         if (dist <= MOVE_DESTINATION_RADIUS) {
             shipCommand.setChangeSpeed(-ship.getMaxChangeSpeed());
         } else {
-            fillCommandToTurn(ship, shipCommand, targetX, targetY);
+            Ship.Direction direction = fillCommandToTurn(ship, shipCommand, targetX, targetY);
+
+            for (int i = 0; i < 2 * ship.getMaxChangeSpeed() + ship.getSize(); i++) {
+                long x = shipX + (long) direction.xDirection * i;
+                long y = shipY + (long) direction.yDirection * i;
+                if (islandMap.contains(x, y)) {
+                    shipCommand.setChangeSpeed(-ship.getMaxChangeSpeed());
+                    return;
+                }
+            }
             shipCommand.setChangeSpeed(ship.getMaxChangeSpeed() - ship.getSpeed());
         }
     }
