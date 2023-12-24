@@ -9,12 +9,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GraphVisualizer extends JFrame {
     private double zoom = 0.4;
     private IslandMap islandMap;
+
+    private List<Ship> myShips = new ArrayList<>();
 
     private IslandMap.Tiles myShipsTiles = new IslandMap.Tiles();
 
@@ -55,7 +59,6 @@ public class GraphVisualizer extends JFrame {
             // paint the canvas
             public void paint(Graphics g)
             {
-                // set color to red
                 g.setColor(new Color(0, 180, 0));
                 g.drawRect((int) (selectedX * zoom), (int) (selectedY * zoom), 2, 2);
 
@@ -68,8 +71,9 @@ public class GraphVisualizer extends JFrame {
                 g.setColor(new Color(180, 180, 0));
                 paintTiles(islandMap.getRawTiles(), g);
 
-                g.setColor(new Color(0, 0, 0));
+                g.setColor(new Color(20, 20, 20));
                 g.drawRect((int) (W / 2 * zoom), (int) (H / 2 * zoom), 2, 2);
+                paintShipLabels(g);
             }
         };
 
@@ -90,8 +94,16 @@ public class GraphVisualizer extends JFrame {
     }
 
     public void setMyShips(List<Ship> myShips) {
+        this.myShips = new ArrayList<>(myShips);
         myShipsTiles = new IslandMap.Tiles();
         myShips.forEach(s -> s.toTiles().forEach(myShipsTiles::addTile));
+    }
+
+    private void paintShipLabels(Graphics g) {
+        for (Ship ship : myShips) {
+            g.setFont(new Font("Bold", 1, 3));
+            g.drawString(ship.getId() + "", (int) (ship.getX() * zoom), (int) ((ship.getY() - 30) * zoom));
+        }
     }
 
     public void setEnemyShips(List<Ship> enemyShips) {

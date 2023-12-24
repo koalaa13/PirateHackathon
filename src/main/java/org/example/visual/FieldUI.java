@@ -11,7 +11,7 @@ public class FieldUI extends JFrame {
     public FieldUI() {
         setSize(200, 100);
 
-        t1 = new TextField();
+        t1 = new TextField("0");
 
         add(t1);
 
