@@ -234,7 +234,8 @@ public class Game {
             long selectedY = graphVisualizer.getSelectedY();
             long selectedShip = fieldUI.getSelectedShip();
 
-            if (selectedShip > 0) {
+            if (selectedShip > 0 &&
+                    newScan.getMyShips().stream().filter(ship -> ship.getId() == selectedShip).count() == 1) {
                 moveX.put(selectedShip, selectedX);
                 moveY.put(selectedShip, selectedY);
             }
