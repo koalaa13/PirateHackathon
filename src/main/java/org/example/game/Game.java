@@ -161,21 +161,34 @@ public class Game {
         long dy = targetY - shipY;
         long dist = max(abs(dx), abs(dy));
 
+        long speedChange = 0;
         if (dist <= MOVE_DESTINATION_RADIUS) {
-            shipCommand.setChangeSpeed(-min(ship.getMaxChangeSpeed(), ship.getSpeed()));
+            speedChange = -ship.getSpeed();
         } else {
             Ship.Direction direction = fillCommandToTurn(ship, shipCommand, targetX, targetY);
 
+            boolean noIsland = true;
             for (int i = 0; i < 2 * ship.getMaxChangeSpeed() + ship.getSize(); i++) {
                 long x = shipX + (long) direction.xDirection * i;
                 long y = shipY + (long) direction.yDirection * i;
                 if (islandMap.contains(x, y)) {
-                    shipCommand.setChangeSpeed(-min(ship.getMaxChangeSpeed(), ship.getSpeed()));
-                    return;
+                    noIsland = false;
+                    speedChange = -ship.getSpeed();
+                    break;
                 }
             }
-            shipCommand.setChangeSpeed(ship.getMaxChangeSpeed() - ship.getSpeed());
+            if (noIsland) {
+                if (dist > 5 * ship.getMaxChangeSpeed()) {
+                    speedChange = 2 * ship.getMaxChangeSpeed() - ship.getSpeed();
+                } else {
+                    shipCommand.setChangeSpeed(ship.getMaxChangeSpeed() - ship.getSpeed());
+                }
+            }
         }
+
+        if (speedChange > ship.getMaxChangeSpeed()) speedChange = ship.getMaxChangeSpeed();
+        if (speedChange < -ship.getMaxChangeSpeed()) speedChange = -ship.getMaxChangeSpeed();
+        shipCommand.setChangeSpeed(speedChange);
     }
 
     public ShipCommands makeShipCommands(Scan scan, Map<Long, Long> moveX, Map<Long, Long> moveY) {
