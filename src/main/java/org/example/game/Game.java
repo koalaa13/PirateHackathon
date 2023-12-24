@@ -9,6 +9,7 @@ import org.example.model.response.Error;
 import org.example.model.response.ScanResponse;
 import org.example.service.alert.AlertService;
 import org.example.service.util.UtilService;
+import org.example.visual.FieldUI;
 import org.example.visual.GraphVisualizer;
 
 import java.time.Duration;
@@ -22,13 +23,15 @@ import static java.lang.Math.max;
 
 public class Game {
     private final IslandMap islandMap;
+    private FieldUI fieldUI;
 
     private final UtilService utilService;
 
     private final GraphVisualizer graphVisualizer;
 
-    public Game(IslandMap islandMap, GraphVisualizer graphVisualizer) {
+    public Game(IslandMap islandMap, GraphVisualizer graphVisualizer, FieldUI fieldUI) {
         this.islandMap = islandMap;
+        this.fieldUI = fieldUI;
         this.utilService = new UtilService();
         this.graphVisualizer = graphVisualizer;
     }
@@ -189,6 +192,7 @@ public class Game {
 
             long selectedX = graphVisualizer.getSelectedX();
             long selectedY = graphVisualizer.getSelectedY();
+            long selectedShip = fieldUI.getSelectedShip();
 
             alertService.getAllInfos(oldScan, newScan).forEach(System.out::println);
 

@@ -54,6 +54,9 @@ public class IslandMap {
     }
 
     public boolean contains(long x, long y) {
+        if (x < 0 || y < 0 || x > width || y > height) {
+            return true;
+        }
         return this.islandTiles.contains(x, y);
     }
 

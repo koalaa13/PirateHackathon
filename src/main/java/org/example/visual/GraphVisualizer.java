@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GraphVisualizer extends JFrame {
-    private double zoom = 0.45;
+    private double zoom = 0.4;
     private IslandMap islandMap;
 
     private IslandMap.Tiles myShipsTiles = new IslandMap.Tiles();
@@ -25,10 +25,6 @@ public class GraphVisualizer extends JFrame {
     private long selectedX = 0;
 
     private long selectedY = 0;
-
-//    public static Image buffer;
-//
-//    public static Graphics bg;
 
     public GraphVisualizer(IslandMap islandMap) {
         super("canvas");

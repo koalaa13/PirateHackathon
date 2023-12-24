@@ -8,6 +8,7 @@ import org.example.model.Scan;
 import org.example.model.Ship;
 import org.example.model.command.ShipCommands;
 import org.example.parse.MapParser;
+import org.example.visual.FieldUI;
 import org.example.visual.GraphVisualizer;
 import org.example.visual.Visualizer;
 
@@ -19,7 +20,8 @@ public class Main {
         MapParser mapParser = new MapParser();
         IslandMap islandMap = mapParser.parseIslandMap();
         GraphVisualizer graphVisualizer = new GraphVisualizer(islandMap);
-        new Game(islandMap, graphVisualizer).play();
+        FieldUI fieldUI = new FieldUI();
+        new Game(islandMap, graphVisualizer, fieldUI).play();
 
 //        Visualizer visualizer = new Visualizer(islandMap, enemyShips, myShips);
 //        visualizer.visualize(0, 0, 60);
