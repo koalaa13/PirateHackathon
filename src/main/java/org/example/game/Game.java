@@ -226,8 +226,7 @@ public class Game {
                 }
                 if (canMove) {
                     usedCells.addAll(ship.getNextCells(shipCommand));
-                }
-                if (!canMove) {
+                } else {
                     fillCommandToStop(ship, shipCommand);
                     shipCommand.setRotate(null);
                 }
