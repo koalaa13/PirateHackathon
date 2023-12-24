@@ -192,7 +192,7 @@ public class Game {
                 if (dist > 5 * ship.getMaxChangeSpeed()) {
                     speedChange = 2 * ship.getMaxChangeSpeed() - ship.getSpeed();
                 } else {
-                    shipCommand.setChangeSpeed(ship.getMaxChangeSpeed() - ship.getSpeed());
+                    speedChange = ship.getMaxChangeSpeed() - ship.getSpeed();
                 }
             }
         }
@@ -207,17 +207,30 @@ public class Game {
         List<ShipCommand> shipCommandList = shipCommands.getShips();
         // TODO build strategy here
         fillShoots(scan, shipCommandList);
-        Set<Shoot> usedCells = new HashSet<>();
+        Set<Ship.Cell> usedCells = new HashSet<>();
         for (ShipCommand shipCommand : shipCommandList) {
             Long shipId = shipCommand.getId();
             if (moveX.containsKey(shipId) && moveY.containsKey(shipId)) {
                 Ship ship = utilService.findShipById(scan, shipId, false);
-
                 fillCommandToMove(ship,
                         shipCommand,
                         moveX.get(shipId),
                         moveY.get(shipId)
                 );
+                boolean canMove = true;
+                for (Ship.Cell cell : ship.getNextCells(shipCommand)) {
+                    if (usedCells.contains(cell)) {
+                        canMove = false;
+                        break;
+                    }
+                }
+                if (canMove) {
+                    usedCells.addAll(ship.getNextCells(shipCommand));
+                }
+                if (!canMove) {
+                    fillCommandToStop(ship, shipCommand);
+                    shipCommand.setRotate(null);
+                }
             }
         }
 //        fillCommandToStopToEveryone(scan, shipCommandList);

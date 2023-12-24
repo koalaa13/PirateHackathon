@@ -1,7 +1,8 @@
 package org.example.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.example.model.command.ShipCommand;
+
+import java.util.*;
 
 public class Ship {
     private long id;
@@ -35,7 +36,26 @@ public class Ship {
         public final int xDirection;
         public final int yDirection;
 
+        public Direction findDirection(long newX, long newY) {
+            if (newX == south.xDirection && newY == south.yDirection) {
+                return south;
+            } else if (newX == north.xDirection && newY == north.yDirection) {
+                return north;
+            } else if (newX == west.xDirection && newY == west.yDirection) {
+                return west;
+            } else {
+                return east;
+            }
+        }
 
+        public Direction applyRotate(Integer rotate) {
+            if (rotate == null) return this;
+            if (rotate == 90) {
+                return findDirection(-yDirection, xDirection);
+            } else {
+                return findDirection(yDirection, -xDirection);
+            }
+        }
     }
 
     public Set<Tile> toTiles() {
@@ -192,5 +212,49 @@ public class Ship {
 
     public void setCannonShootSuccessCount(long cannonShootSuccessCount) {
         this.cannonShootSuccessCount = cannonShootSuccessCount;
+    }
+
+    public static class Cell {
+        private final long x;
+
+        private final long y;
+
+        public Cell(long x, long y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public long getX() {
+            return x;
+        }
+
+        public long getY() {
+            return y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Cell cell = (Cell) o;
+            return x == cell.x && y == cell.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+
+    public List<Cell> getNextCells(ShipCommand shipCommand) {
+        long newSpeed = getSpeed() + shipCommand.getChangeSpeed();
+        long newX = x + getDirection().xDirection * newSpeed;
+        long newY = y + getDirection().yDirection * newSpeed;
+        Direction newDir = getDirection().applyRotate(shipCommand.getRotate());
+        List<Cell> cells = new ArrayList<>();
+        for (int i = 0; i < getSize(); i++) {
+            cells.add(new Cell(newX + newDir.xDirection * i, newY + newDir.yDirection * i));
+        }
+        return cells;
     }
 }
