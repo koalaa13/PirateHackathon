@@ -229,6 +229,7 @@ public class Game {
             if (newScan.getTick() % 16 == 0) {
                 makeLongScanRequest(newScan);
             }
+            graphVisualizer.setZone(newScan.getZone());
 
             long selectedX = graphVisualizer.getSelectedX();
             long selectedY = graphVisualizer.getSelectedY();
