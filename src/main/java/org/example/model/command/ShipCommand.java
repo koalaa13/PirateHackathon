@@ -7,14 +7,14 @@ public class ShipCommand {
 
     private long changeSpeed;
 
-    private int rotate;
+    private Integer rotate;
 
     private Shoot cannonShoot;
 
     public ShipCommand() {
         this.id = 0;
         this.changeSpeed = 0;
-        this.rotate = 0;
+        this.rotate = null;
         this.cannonShoot = null;
     }
 
@@ -39,11 +39,11 @@ public class ShipCommand {
         this.changeSpeed = changeSpeed;
     }
 
-    public int getRotate() {
+    public Integer getRotate() {
         return rotate;
     }
 
-    public void setRotate(int rotate) {
+    public void setRotate(Integer rotate) {
         this.rotate = rotate;
     }
 

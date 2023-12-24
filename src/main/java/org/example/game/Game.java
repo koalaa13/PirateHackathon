@@ -4,6 +4,8 @@ import org.example.api.ApiController;
 import org.example.model.*;
 import org.example.model.command.ShipCommand;
 import org.example.model.command.ShipCommands;
+import org.example.model.response.DefaultApiResponse;
+import org.example.model.response.Error;
 import org.example.model.response.ScanResponse;
 import org.example.service.alert.AlertService;
 import org.example.service.util.UtilService;
@@ -118,19 +120,21 @@ public class Game {
         ApiController apiController = new ApiController();
         AlertService alertService = new AlertService();
 
-        long lastTick = -1;
         Scan oldScan = null;
         while (true) {
             ScanResponse response = apiController.scan();
             if (!verify(response.isSuccess(), "success scan query")) continue;
             Scan newScan = response.getScan();
             if (!verify(newScan != null, "scan not null")) continue;
-            if (newScan.getTick() == lastTick) continue;
+            if (oldScan != null && newScan.getTick() == oldScan.getTick()) continue;
 
             alertService.getAllInfos(oldScan, newScan).forEach(System.out::println);
 
             ShipCommands shipCommands = makeShipCommands(newScan);
-            apiController.shipCommand(shipCommands);
+            DefaultApiResponse shipCommandsResponse = apiController.shipCommand(shipCommands);
+            if (shipCommandsResponse.getErrors() != null && !shipCommandsResponse.getErrors().isEmpty()) {
+                shipCommandsResponse.getErrors().stream().map(Error::getMessage).forEach(System.out::println);
+            }
 
             oldScan = newScan;
             Thread.sleep(Duration.ofSeconds(1).toMillis());

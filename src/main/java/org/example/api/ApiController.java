@@ -57,6 +57,7 @@ public class ApiController {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             final String json = objectMapper.writeValueAsString(query);
             final StringEntity entity = new StringEntity(json);
+            System.out.println("Ship commands: " + json);
             HttpPost request = new HttpPost(API_URL + "/shipCommand");
             request.setEntity(entity);
             request.setHeader(API_AUTH_HEADER, API_KEY);
