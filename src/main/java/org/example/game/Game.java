@@ -16,8 +16,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 public class Game {
     private final IslandMap islandMap;
@@ -158,7 +157,7 @@ public class Game {
         long dist = max(abs(dx), abs(dy));
 
         if (dist <= MOVE_DESTINATION_RADIUS) {
-            shipCommand.setChangeSpeed(-ship.getMaxChangeSpeed());
+            shipCommand.setChangeSpeed(-min(ship.getMaxChangeSpeed(), ship.getSpeed()));
         } else {
             Ship.Direction direction = fillCommandToTurn(ship, shipCommand, targetX, targetY);
 
@@ -166,7 +165,7 @@ public class Game {
                 long x = shipX + (long) direction.xDirection * i;
                 long y = shipY + (long) direction.yDirection * i;
                 if (islandMap.contains(x, y)) {
-                    shipCommand.setChangeSpeed(-ship.getMaxChangeSpeed());
+                    shipCommand.setChangeSpeed(-min(ship.getMaxChangeSpeed(), ship.getSpeed()));
                     return;
                 }
             }
