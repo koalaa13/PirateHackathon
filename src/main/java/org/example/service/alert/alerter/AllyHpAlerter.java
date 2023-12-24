@@ -24,7 +24,7 @@ public class AllyHpAlerter implements Alerter {
                 long newHp = newShip.getHp();
                 if (oldHp < newHp) {
                     infos.add(String.format("Корабль %d похилился на %dхп", oldShip.getId(), newHp - oldHp));
-                } else {
+                } else if (oldHp > newHp) {
                     infos.add(String.format("Корабль %d подбили на %dхп", oldShip.getId(), oldHp - newHp));
                 }
             }

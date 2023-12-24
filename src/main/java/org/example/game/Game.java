@@ -108,7 +108,7 @@ public class Game {
         ShipCommands shipCommands = buildShipCommands(scan);
         List<ShipCommand> shipCommandList = shipCommands.getShips();
         // TODO build strategy here
-//        fillShoots(scan, shipCommandList);
+        fillShoots(scan, shipCommandList);
 //        fillCommandToStopToEveryone(scan, shipCommandList);
 
         return shipCommands;

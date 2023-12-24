@@ -23,8 +23,9 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, JsonProcessingException {
         downloadMap();
 
-//        MapParser mapParser = new MapParser();
-//        IslandMap islandMap = mapParser.parseIslandMap();
+        MapParser mapParser = new MapParser();
+        IslandMap islandMap = mapParser.parseIslandMap();
+        new Game(islandMap).play();
 //        Ship myShip = new Ship();
 //        myShip.setId(1L);
 //        myShip.setX(20);
