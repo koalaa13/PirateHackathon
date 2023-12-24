@@ -66,7 +66,7 @@ public class Game {
             return Integer.compare(s1.getHp(), s2.getHp());
         });
         for (Ship ship : sortedShipsViaHp) {
-            potentialShoots.add(new Pair(new Shoot(ship.getForwardX(), ship.getForwardY()), ship.getHp()));
+            potentialShoots.add(new Pair<>(new Shoot(ship.getForwardX(), ship.getForwardY()), (long) ship.getHp()));
         }
         potentialShoots = potentialShoots.stream()
                 .filter(shoot -> !islandMap.contains(shoot.first.getX(), shoot.first.getY()))
