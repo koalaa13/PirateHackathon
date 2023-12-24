@@ -4,6 +4,7 @@ package org.example.visual;
 import org.example.model.IslandMap;
 import org.example.model.Ship;
 import org.example.model.Tile;
+import org.example.model.Zone;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +30,8 @@ public class GraphVisualizer extends JFrame {
     private long selectedX = 0;
 
     private long selectedY = 0;
+
+    private Zone zone = null;
 
     public GraphVisualizer(IslandMap islandMap) {
         super("canvas");
@@ -74,6 +77,9 @@ public class GraphVisualizer extends JFrame {
                 g.setColor(new Color(20, 20, 20));
                 g.drawRect((int) (W / 2 * zoom), (int) (H / 2 * zoom), 2, 2);
                 paintShipLabels(g);
+
+                g.setColor(new Color(240, 100, 100));
+                paintZone(g);
             }
         };
 
@@ -109,6 +115,17 @@ public class GraphVisualizer extends JFrame {
     public void setEnemyShips(List<Ship> enemyShips) {
         enemyShipsTiles = new IslandMap.Tiles();
         enemyShips.forEach(s -> s.toTiles().forEach(enemyShipsTiles::addTile));
+    }
+
+    private void paintZone(Graphics g) {
+        if (zone == null) return;
+        g.drawRect((int) (zone.getX() * zoom), (int) (zone.getY() * zoom), 1, 1);
+        g.drawOval((int) ((zone.getX() - zone.getRadius()) * zoom), (int) ((zone.getY() - zone.getRadius()) * zoom),
+                (int) (2 * zone.getRadius() * zoom), (int) (2 * zone.getRadius() * zoom));
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
     }
 
     public long getSelectedX() {
