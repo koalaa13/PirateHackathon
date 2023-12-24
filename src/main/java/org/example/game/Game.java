@@ -13,9 +13,7 @@ import org.example.visual.FieldUI;
 import org.example.visual.GraphVisualizer;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
@@ -178,11 +176,21 @@ public class Game {
         }
     }
 
-    public ShipCommands makeShipCommands(Scan scan) {
+    public ShipCommands makeShipCommands(Scan scan, Map<Long, Long> moveX, Map<Long, Long> moveY) {
         ShipCommands shipCommands = buildShipCommands(scan);
         List<ShipCommand> shipCommandList = shipCommands.getShips();
         // TODO build strategy here
         fillShoots(scan, shipCommandList);
+        for (ShipCommand shipCommand : shipCommandList) {
+            Long shipId = shipCommand.getId();
+            if (moveX.containsKey(shipId) && moveY.containsKey(shipId)) {
+                fillCommandToMove(utilService.findShipById(scan, shipId, false),
+                        shipCommand,
+                        moveX.get(shipId),
+                        moveY.get(shipId)
+                );
+            }
+        }
 //        fillCommandToStopToEveryone(scan, shipCommandList);
 
         return shipCommands;
@@ -207,6 +215,9 @@ public class Game {
         ApiController apiController = new ApiController();
         AlertService alertService = new AlertService();
 
+        Map<Long, Long> moveX = new HashMap<>();
+        Map<Long, Long> moveY = new HashMap<>();
+
         Scan oldScan = null;
         while (true) {
             ScanResponse response = apiController.scan();
@@ -223,9 +234,15 @@ public class Game {
             long selectedY = graphVisualizer.getSelectedY();
             long selectedShip = fieldUI.getSelectedShip();
 
+            if (selectedShip > 0) {
+                moveX.put(selectedShip, selectedX);
+                moveY.put(selectedShip, selectedY);
+            }
+
             alertService.getAllInfos(oldScan, newScan).forEach(System.out::println);
 
-            ShipCommands shipCommands = makeShipCommands(newScan);
+            ShipCommands shipCommands = makeShipCommands(newScan, moveX, moveY);
+
             DefaultApiResponse shipCommandsResponse = apiController.shipCommand(shipCommands);
             if (shipCommandsResponse.getErrors() != null && !shipCommandsResponse.getErrors().isEmpty()) {
                 shipCommandsResponse.getErrors().stream().map(Error::getMessage).forEach(System.out::println);
