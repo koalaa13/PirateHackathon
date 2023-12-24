@@ -188,6 +188,21 @@ public class Game {
         return shipCommands;
     }
 
+    private void makeLongScanRequest(Scan scan) {
+        Zone zone = scan.getZone();
+        if (zone != null) {
+            ApiController apiController = new ApiController();
+            Random random = new Random();
+            int diffX = random.nextInt((int) zone.getRadius());
+            int diffY = random.nextInt((int) zone.getRadius());
+            int signX = random.nextBoolean() ? 1 : -1;
+            int signY = random.nextBoolean() ? 1 : -1;
+            long x = zone.getX() + signX * diffX;
+            long y = zone.getY() + signY * diffY;
+            apiController.longScan(x, y);
+        }
+    }
+
     public void play() throws InterruptedException {
         ApiController apiController = new ApiController();
         AlertService alertService = new AlertService();
@@ -199,6 +214,10 @@ public class Game {
             Scan newScan = response.getScan();
             if (!verify(newScan != null, "scan not null")) continue;
             if (oldScan != null && newScan.getTick() == oldScan.getTick()) continue;
+
+            if (newScan.getTick() % 16 == 0) {
+                makeLongScanRequest(newScan);
+            }
 
             long selectedX = graphVisualizer.getSelectedX();
             long selectedY = graphVisualizer.getSelectedY();
