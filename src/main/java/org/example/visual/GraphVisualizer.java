@@ -39,10 +39,6 @@ public class GraphVisualizer extends JFrame {
 
         setSize(W, H);
 
-//        buffer = createImage(W, H);
-//        bg = buffer.getGraphics();
-
-
         addMouseListener(new MouseListener(){
             public void mouseClicked(MouseEvent e){
                 selectedX = e.getX();
@@ -77,10 +73,7 @@ public class GraphVisualizer extends JFrame {
             }
         };
 
-        canvas.setBackground(Color.black);
-
         add(canvas);
-        canvas.setBackground(Color.black);
         show();
     }
 
@@ -104,5 +97,13 @@ public class GraphVisualizer extends JFrame {
     public void setEnemyShips(List<Ship> enemyShips) {
         enemyShipsTiles = new IslandMap.Tiles();
         enemyShips.forEach(s -> s.toTiles().forEach(enemyShipsTiles::addTile));
+    }
+
+    public long getSelectedX() {
+        return selectedX;
+    }
+
+    public long getSelectedY() {
+        return selectedY;
     }
 }

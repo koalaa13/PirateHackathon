@@ -132,6 +132,9 @@ public class Game {
             if (!verify(newScan != null, "scan not null")) continue;
             if (oldScan != null && newScan.getTick() == oldScan.getTick()) continue;
 
+            long selectedX = graphVisualizer.getSelectedX();
+            long selectedY = graphVisualizer.getSelectedY();
+
             alertService.getAllInfos(oldScan, newScan).forEach(System.out::println);
 
             ShipCommands shipCommands = makeShipCommands(newScan);
@@ -139,6 +142,11 @@ public class Game {
             if (shipCommandsResponse.getErrors() != null && !shipCommandsResponse.getErrors().isEmpty()) {
                 shipCommandsResponse.getErrors().stream().map(Error::getMessage).forEach(System.out::println);
             }
+
+            graphVisualizer.setMyShips(newScan.getMyShips());
+            graphVisualizer.setEnemyShips(newScan.getEnemyShips());
+
+            graphVisualizer.updateGraph();
 
             oldScan = newScan;
             Thread.sleep(Duration.ofSeconds(1).toMillis());
